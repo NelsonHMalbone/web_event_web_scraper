@@ -16,13 +16,24 @@ def extract(text_source):
     value = extractor.extract(text_source)["tours"]
     return value
 
+
+def extracted_data(extracted):
+    file_path = "extracted_tour_data.txt"
+    with open(file_path, 'a') as file:
+        file.write(extracted + "\n")
+
+
 def send_email():
     print("Email was sent")
+
+
 if __name__ == "__main__":
     scraped = scrape(URL)
     extracted = extract(scraped)
+    extracted_data(extracted)
     print(extracted)
     # will only send email if a tour is trigger
     if extracted != "No upcoming tours":
-        send_email()
+        if extracted not in "extracted_tour_data.txt":
+            send_email()
 
