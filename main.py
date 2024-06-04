@@ -16,8 +16,12 @@ def extract(text_source):
     value = extractor.extract(text_source)["tours"]
     return value
 
-
+def send_email():
+    print("Email was sent")
 if __name__ == "__main__":
     scraped = scrape(URL)
     extracted = extract(scraped)
     print(extracted)
+    if extracted != "No Upcoming Tours":
+        send_email()
+
