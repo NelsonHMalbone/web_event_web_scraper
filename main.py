@@ -1,5 +1,6 @@
 import requests
 import selectorlib
+import CONFIG
 
 
 URL = "https://programmer100.pythonanywhere.com/tours/"
