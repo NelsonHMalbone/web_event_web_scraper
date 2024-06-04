@@ -22,6 +22,7 @@ if __name__ == "__main__":
     scraped = scrape(URL)
     extracted = extract(scraped)
     print(extracted)
-    if extracted != "No Upcoming Tours":
+    # will only send email if a tour is trigger
+    if extracted != "No upcoming tours":
         send_email()
 
