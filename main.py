@@ -1,5 +1,7 @@
+import sys
 import time
 
+import keyboard
 import requests
 import selectorlib
 import CONFIG
@@ -61,6 +63,7 @@ def send_email(message):
 
 
 if __name__ == "__main__":
+    print("Press and hold Esc to quit program")
     while True:
         try:
             scraped = scrape(URL)
@@ -73,6 +76,10 @@ if __name__ == "__main__":
                     # only storing and email data when new events spawn
                     extracted_data(extracted)
                     send_email(message=f'new concert up in coming {extracted}')
-            time.sleep(4)
-        except KeyboardInterrupt:
-            print("Good day")
+            time.sleep(3)
+
+            if keyboard.is_pressed("Esc"):
+                print("Come Back tomorrow to see more events")
+                sys.exit(0)
+        except:
+            break
