@@ -29,9 +29,10 @@ def extract(text_source):
 
 # placing extracted data on to a txt file
 def extracted_data(extracted):
+    now = time.strftime("%a, %d %b %Y %H:%M:%S ")
     file_path = "extracted_tour_data.txt"
     with open(file_path, 'a') as file:
-        file.write(extracted + "\n")
+        file.write(now + extracted + "\n")
 
 
 def read(extracted):
