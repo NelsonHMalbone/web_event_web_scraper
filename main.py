@@ -1,3 +1,5 @@
+import time
+
 import requests
 import selectorlib
 import CONFIG
@@ -59,14 +61,18 @@ def send_email(message):
 
 
 if __name__ == "__main__":
-    scraped = scrape(URL)
-    extracted = extract(scraped)
-    print(extracted)
-    content = read(extracted)
-    # will only send email if a tour is trigger
-    if extracted != "No upcoming tours":
-        if extracted not in content:
-            # only storing and email data when new events spawn
-            extracted_data(extracted)
-            send_email(message=f'new concert up in coming {extracted}')
-
+    while True:
+        try:
+            scraped = scrape(URL)
+            extracted = extract(scraped)
+            print(extracted)
+            content = read(extracted)
+            # will only send email if a tour is trigger
+            if extracted != "No upcoming tours":
+                if extracted not in content:
+                    # only storing and email data when new events spawn
+                    extracted_data(extracted)
+                    send_email(message=f'new concert up in coming {extracted}')
+            time.sleep(4)
+        except KeyboardInterrupt:
+            print("Good day")
