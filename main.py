@@ -7,9 +7,13 @@ import selectorlib
 import CONFIG
 import smtplib
 from email.message import EmailMessage
+import sqlite3
 
 
 URL = "https://programmer100.pythonanywhere.com/tours/"
+
+# Establishg a connection along with a cursor
+connection = sqlite3.connect('data.db')
 
 
 # scraping the url provided
@@ -29,17 +33,39 @@ def extract(text_source):
 
 # placing extracted data on to a txt file
 def extracted_data(extracted):
-    now = time.strftime("%a, %d %b %Y %H:%M:%S ")
-    file_path = "extracted_tour_data.txt"
-    with open(file_path, 'a') as file:
-        file.write(now + extracted + "\n")
+    # used for txt files and such
+    #now = time.strftime("%a, %d %b %Y %H:%M:%S ")
+    #file_path = "extracted_tour_data.txt"
+    #with open(file_path, 'a+') as file:
+        #file.write(now + extracted + "\n")
 
-
+    # striping ","
+    row = extracted.split(",")
+    # striping leading and trailing empty space
+    row = [item.strip() for item in row]
+    cursor = connection.cursor()
+    # using this because we expect one list at a time
+    cursor.execute("INSERT INTO events VALUES(?,?,?)", row)
+    connection.commit()
 def read(extracted):
-    file_path = "extracted_tour_data.txt"
-    with open(file_path, 'r') as file:
-        return file.read()
-
+    # storing data with txt
+    #file_path = "extracted_tour_data.txt"
+    #with open(file_path, 'r') as file:
+        #return file.read()
+    # setting up for sql data base
+    # striping ","
+    row = extracted.split(",")
+    # striping leading and trailing empty space
+    row = [item.strip() for item in row]
+    band, city, date = row
+    # query data based on condition
+    cursor = connection.cursor()
+    # asking our database to give us all rows where band is band and such
+    cursor.execute("SELECT * FROM events WHERE band=? AND city=? AND date=?",
+                   (band, city, date))
+    row = cursor.fetchall()
+    print(row)
+    return row
 
 # will send a email for new or upcoming events
 def send_email(message):
@@ -70,10 +96,13 @@ if __name__ == "__main__":
             scraped = scrape(URL)
             extracted = extract(scraped)
             print(extracted)
-            content = read(extracted)
+            #content = read(extracted) used for txt and such
             # will only send email if a tour is trigger
             if extracted != "No upcoming tours":
-                if extracted not in content:
+                # only diffent when "No upcoming tours"
+                row = read(extracted)
+                #if extracted not in content: only for txt and such
+                if not row: # checking for no such rows then we store into data base
                     # only storing and email data when new events spawn
                     extracted_data(extracted)
                     send_email(message=f'new concert up in coming {extracted}')
